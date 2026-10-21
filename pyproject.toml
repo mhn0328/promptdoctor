@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "promptlint"
+version = "0.1.0"
+description = "A tiny static linter for LLM prompts: catch missing output formats, vague wording and conflicting constraints before you ship them."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "mhn0328" }]
+keywords = ["llm", "prompt-engineering", "linter", "ai", "cli", "openai", "prompt"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development :: Quality Assurance",
+  "Typing :: Typed",
+]
+
+[project.scripts]
+promptlint = "promptlint.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/mhn0328/promptlint"
+Issues = "https://github.com/mhn0328/promptlint/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]

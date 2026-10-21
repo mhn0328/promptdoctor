@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.9", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: python -m pip install -e .
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Lint the clean example (must pass)
+        run: promptlint examples/good.md --strict
+
+      - name: Lint the messy example (expected to fail)
+        continue-on-error: true
+        run: promptlint examples/bad.md --format github
