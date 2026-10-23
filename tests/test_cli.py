@@ -10,7 +10,7 @@ from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from promptlint.cli import main  # noqa: E402
+from promptdoctor.cli import main  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 GOOD = str(ROOT / "examples" / "good.md")
@@ -37,7 +37,7 @@ class CliTests(unittest.TestCase):
     def test_bad_prompt_exits_one(self):
         code, out, _ = run_cli([BAD])
         self.assertEqual(code, 1)
-        self.assertIn("PL107", out)
+        self.assertIn("PD107", out)
 
     def test_json_format_is_valid_json(self):
         code, out, _ = run_cli([BAD, "--format", "json"])
@@ -57,7 +57,7 @@ class CliTests(unittest.TestCase):
         code, out, _ = run_cli([], stdin_text="Give me some ideas.\n")
         self.assertEqual(code, 0)  # warnings only: exit stays 0
         self.assertIn("<stdin>", out)
-        self.assertIn("PL103", out)
+        self.assertIn("PD103", out)
 
     def test_strict_promotes_warnings_to_failures(self):
         warning_only = "Summarise the note below.\n"
@@ -72,21 +72,21 @@ class CliTests(unittest.TestCase):
         self.assertEqual(code, 0)
 
     def test_disable_flag_skips_rules(self):
-        _, out, _ = run_cli([BAD, "--disable", "PL107,PL108"])
-        self.assertNotIn("PL107", out)
-        self.assertNotIn("PL108", out)
-        self.assertIn("PL110", out)
+        _, out, _ = run_cli([BAD, "--disable", "PD107,PD108"])
+        self.assertNotIn("PD107", out)
+        self.assertNotIn("PD108", out)
+        self.assertIn("PD110", out)
 
     def test_unknown_rule_is_a_usage_error(self):
         with self.assertRaises(SystemExit) as ctx:
-            run_cli([GOOD, "--disable", "PL999"])
+            run_cli([GOOD, "--disable", "PD999"])
         self.assertEqual(ctx.exception.code, 2)
 
     def test_list_rules(self):
         code, out, _ = run_cli(["--list-rules"])
         self.assertEqual(code, 0)
-        self.assertIn("PL101", out)
-        self.assertIn("PL107", out)
+        self.assertIn("PD101", out)
+        self.assertIn("PD107", out)
 
     def test_quiet_prints_nothing_in_text_mode(self):
         code, out, _ = run_cli([BAD, "--quiet"])

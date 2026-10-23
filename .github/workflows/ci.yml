@@ -28,8 +28,8 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Lint the clean example (must pass)
-        run: promptlint examples/good.md --strict
+        run: promptdoctor examples/good.md --strict
 
       - name: Lint the messy example (expected to fail)
         continue-on-error: true
-        run: promptlint examples/bad.md --format github
+        run: promptdoctor examples/bad.md --format github

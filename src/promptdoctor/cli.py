@@ -1,4 +1,4 @@
-"""Command line interface for promptlint."""
+"""Command line interface for promptdoctor."""
 
 from __future__ import annotations
 
@@ -17,16 +17,16 @@ PROMPT_SUFFIXES = (".md", ".txt", ".prompt", ".tmpl", ".j2", ".jinja")
 SKIP_DIRS = {".git", ".hg", ".venv", "venv", "node_modules", "__pycache__", ".mypy_cache"}
 
 EPILOG = """examples:
-  promptlint prompts/                 # lint every .md/.txt prompt in a folder
-  promptlint system.prompt -           # two prompts: a file and stdin
-  cat prompt.txt | promptlint --format json
-  promptlint prompts/ --strict        # treat warnings as failures in CI
+  promptdoctor prompts/                 # lint every .md/.txt prompt in a folder
+  promptdoctor system.prompt -           # two prompts: a file and stdin
+  cat prompt.txt | promptdoctor --format json
+  promptdoctor prompts/ --strict        # treat warnings as failures in CI
 """
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="promptlint",
+        prog="promptdoctor",
         description="A tiny static linter for LLM prompts.",
         epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -55,7 +55,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="append",
         default=[],
         metavar="IDS",
-        help="comma-separated rule ids to skip, e.g. --disable PL101,PL108",
+        help="comma-separated rule ids to skip, e.g. --disable PD101,PD108",
     )
     parser.add_argument(
         "--strict",
@@ -70,7 +70,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="text mode only: print just the exit code (json/github stay parseable)",
     )
-    parser.add_argument("--version", action="version", version=f"promptlint {__version__}")
+    parser.add_argument("--version", action="version", version=f"promptdoctor {__version__}")
     return parser
 
 
@@ -93,7 +93,7 @@ def _lint_file(path: Path, max_tokens: int, disable: Sequence[str]) -> LintResul
     try:
         text = _read(path)
     except OSError as exc:  # pragma: no cover - depends on filesystem
-        print(f"promptlint: {path}: {exc}", file=sys.stderr)
+        print(f"promptdoctor: {path}: {exc}", file=sys.stderr)
         text = ""
     return lint(text, str(path), max_tokens=max_tokens, disable=disable)
 
@@ -115,7 +115,7 @@ def _resolve_targets(
     for raw in paths:
         if raw == "-":
             if stdin_text is None:
-                print("promptlint: '-' given but stdin is empty", file=sys.stderr)
+                print("promptdoctor: '-' given but stdin is empty", file=sys.stderr)
                 continue
             results.append(lint(stdin_text, "<stdin>", max_tokens=max_tokens, disable=disable))
             continue
@@ -124,13 +124,13 @@ def _resolve_targets(
         if path.is_dir():
             files = _iter_prompt_files(path)
             if not files:
-                print(f"promptlint: no prompt files under {raw}", file=sys.stderr)
+                print(f"promptdoctor: no prompt files under {raw}", file=sys.stderr)
             for file_path in files:
                 results.append(_lint_file(file_path, max_tokens, disable))
         elif path.is_file():
             results.append(_lint_file(path, max_tokens, disable))
         else:
-            print(f"promptlint: cannot read {raw}", file=sys.stderr)
+            print(f"promptdoctor: cannot read {raw}", file=sys.stderr)
 
     return results
 
@@ -163,7 +163,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     if not args.paths and stdin_text is None:
         parser.print_usage(sys.stderr)
-        print("promptlint: error: no input; pass a file, a directory, or pipe a prompt", file=sys.stderr)
+        print("promptdoctor: error: no input; pass a file, a directory, or pipe a prompt", file=sys.stderr)
         return 2
 
     results = _resolve_targets(args.paths, stdin_text, max_tokens=max_tokens, disable=disable)

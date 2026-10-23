@@ -93,14 +93,14 @@ def _line_of(text: str, position: int) -> int:
     return text.count("\n", 0, position) + 1
 
 
-# -- PL100: nothing to lint -------------------------------------------------
+# -- PD100: nothing to lint -------------------------------------------------
 
 def check_empty(prompt: Prompt, ctx: Context) -> List[Finding]:
     if prompt.text.strip():
         return []
     return [
         Finding(
-            "PL100",
+            "PD100",
             "error",
             "prompt is empty",
             None,
@@ -109,7 +109,7 @@ def check_empty(prompt: Prompt, ctx: Context) -> List[Finding]:
     ]
 
 
-# -- PL101: no output format ------------------------------------------------
+# -- PD101: no output format ------------------------------------------------
 
 _FORMAT_RE = re.compile(
     r"\b(json|yaml|yml|markdown|md|table|csv|tsv|xml|html|sql|bullet(?:s|ed)?|"
@@ -124,7 +124,7 @@ def check_output_format(prompt: Prompt, ctx: Context) -> List[Finding]:
         return []
     return [
         Finding(
-            "PL101",
+            "PD101",
             "warning",
             "no output format is specified",
             None,
@@ -133,7 +133,7 @@ def check_output_format(prompt: Prompt, ctx: Context) -> List[Finding]:
     ]
 
 
-# -- PL102: no length constraint --------------------------------------------
+# -- PD102: no length constraint --------------------------------------------
 
 _LENGTH_RE = re.compile(
     r"\b(?:\d+|one|two|three|four|five|a\s+single|a\s+few)\s+"
@@ -149,7 +149,7 @@ def check_length_constraint(prompt: Prompt, ctx: Context) -> List[Finding]:
         return []
     return [
         Finding(
-            "PL102",
+            "PD102",
             "warning",
             "no length limit is specified",
             None,
@@ -158,7 +158,7 @@ def check_length_constraint(prompt: Prompt, ctx: Context) -> List[Finding]:
     ]
 
 
-# -- PL103: vague quantifiers ----------------------------------------------
+# -- PD103: vague quantifiers ----------------------------------------------
 
 _VAGUE_WORDS: Tuple[str, ...] = (
     "some",
@@ -192,7 +192,7 @@ def check_vague_quantifiers(prompt: Prompt, ctx: Context) -> List[Finding]:
     for word, line in hits[:4]:
         findings.append(
             Finding(
-                "PL103",
+                "PD103",
                 "warning",
                 f'vague expression "{word}"',
                 line,
@@ -202,7 +202,7 @@ def check_vague_quantifiers(prompt: Prompt, ctx: Context) -> List[Finding]:
     return findings
 
 
-# -- PL104: negative-only instruction --------------------------------------
+# -- PD104: negative-only instruction --------------------------------------
 
 _NEGATIVE_RE = re.compile(
     r"\b(don'?t|do not|never|avoid|must not|should not|shouldn'?t|cannot|can'?t)\b", re.I
@@ -218,7 +218,7 @@ def check_negative_only(prompt: Prompt, ctx: Context) -> List[Finding]:
         return []
     return [
         Finding(
-            "PL104",
+            "PD104",
             "warning",
             "prohibitions without a stated alternative",
             _line_of(prompt.text, negative.start()),
@@ -227,7 +227,7 @@ def check_negative_only(prompt: Prompt, ctx: Context) -> List[Finding]:
     ]
 
 
-# -- PL105: unguarded placeholder ------------------------------------------
+# -- PD105: unguarded placeholder ------------------------------------------
 
 _PLACEHOLDER_RE = re.compile(
     r"\{\{[^{}\n]+\}\}"
@@ -260,7 +260,7 @@ def check_placeholders(prompt: Prompt, ctx: Context) -> List[Finding]:
             continue
         return [
             Finding(
-                "PL105",
+                "PD105",
                 "warning",
                 f"placeholder {token!r} has no trust instruction",
                 _line_of(prompt.text, match.start()),
@@ -271,14 +271,14 @@ def check_placeholders(prompt: Prompt, ctx: Context) -> List[Finding]:
     return []
 
 
-# -- PL106: token budget ---------------------------------------------------
+# -- PD106: token budget ---------------------------------------------------
 
 def check_token_budget(prompt: Prompt, ctx: Context) -> List[Finding]:
     if ctx.token_estimate <= ctx.max_tokens:
         return []
     return [
         Finding(
-            "PL106",
+            "PD106",
             "info",
             f"prompt is ~{ctx.token_estimate} tokens, above the {ctx.max_tokens}-token budget",
             None,
@@ -287,7 +287,7 @@ def check_token_budget(prompt: Prompt, ctx: Context) -> List[Finding]:
     ]
 
 
-# -- PL107: contradictory constraints --------------------------------------
+# -- PD107: contradictory constraints --------------------------------------
 
 _BREVITY_RE = re.compile(
     r"\b(brief(?:ly)?|concise|short|succinct|one-liner|tldr|tl;dr|summar(?:y|ize|ise))\b", re.I
@@ -307,7 +307,7 @@ def check_conflicting_constraints(prompt: Prompt, ctx: Context) -> List[Finding]
         return []
     return [
         Finding(
-            "PL107",
+            "PD107",
             "error",
             f'conflicting goals: "{brevity.group(0)}" and "{depth.group(0)}"',
             _line_of(prompt.text, depth.start()),
@@ -316,7 +316,7 @@ def check_conflicting_constraints(prompt: Prompt, ctx: Context) -> List[Finding]
     ]
 
 
-# -- PL108: stacked emphasis ----------------------------------------------
+# -- PD108: stacked emphasis ----------------------------------------------
 
 _CAPS_RE = re.compile(r"\b[A-Z]{3,}\b")
 
@@ -328,7 +328,7 @@ def check_emphasis(prompt: Prompt, ctx: Context) -> List[Finding]:
         return []
     return [
         Finding(
-            "PL108",
+            "PD108",
             "info",
             f"heavy emphasis ({len(caps)} ALL-CAPS words, {bangs} '!')",
             None,
@@ -338,7 +338,7 @@ def check_emphasis(prompt: Prompt, ctx: Context) -> List[Finding]:
     ]
 
 
-# -- PL110: duplicated instructions ---------------------------------------
+# -- PD110: duplicated instructions ---------------------------------------
 
 def check_duplicate_lines(prompt: Prompt, ctx: Context) -> List[Finding]:
     seen: Dict[str, int] = {}
@@ -351,7 +351,7 @@ def check_duplicate_lines(prompt: Prompt, ctx: Context) -> List[Finding]:
         if key in seen:
             findings.append(
                 Finding(
-                    "PL110",
+                    "PD110",
                     "warning",
                     f"duplicated instruction (first seen on line {seen[key]})",
                     index,
@@ -375,16 +375,16 @@ class Rule:
 
 
 RULES: Tuple[Rule, ...] = (
-    Rule("PL100", "error", "prompt is empty", check_empty),
-    Rule("PL101", "warning", "no output format is specified", check_output_format),
-    Rule("PL102", "warning", "no length limit is specified", check_length_constraint),
-    Rule("PL103", "warning", "vague quantifiers", check_vague_quantifiers),
-    Rule("PL104", "warning", "prohibitions without an alternative", check_negative_only),
-    Rule("PL105", "warning", "unguarded placeholder for external content", check_placeholders),
-    Rule("PL106", "info", "prompt exceeds the token budget", check_token_budget),
-    Rule("PL107", "error", "contradictory brevity/depth constraints", check_conflicting_constraints),
-    Rule("PL108", "info", "stacked emphasis", check_emphasis),
-    Rule("PL110", "warning", "duplicated instructions", check_duplicate_lines),
+    Rule("PD100", "error", "prompt is empty", check_empty),
+    Rule("PD101", "warning", "no output format is specified", check_output_format),
+    Rule("PD102", "warning", "no length limit is specified", check_length_constraint),
+    Rule("PD103", "warning", "vague quantifiers", check_vague_quantifiers),
+    Rule("PD104", "warning", "prohibitions without an alternative", check_negative_only),
+    Rule("PD105", "warning", "unguarded placeholder for external content", check_placeholders),
+    Rule("PD106", "info", "prompt exceeds the token budget", check_token_budget),
+    Rule("PD107", "error", "contradictory brevity/depth constraints", check_conflicting_constraints),
+    Rule("PD108", "info", "stacked emphasis", check_emphasis),
+    Rule("PD110", "warning", "duplicated instructions", check_duplicate_lines),
 )
 
 RULES_BY_ID: Dict[str, Rule] = {rule.id: rule for rule in RULES}

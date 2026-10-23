@@ -3,8 +3,8 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "promptlint"
-version = "0.1.0"
+name = "promptdoctor"
+version = "0.2.0"
 description = "A tiny static linter for LLM prompts: catch missing output formats, vague wording and conflicting constraints before you ship them."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -23,11 +23,11 @@ classifiers = [
 ]
 
 [project.scripts]
-promptlint = "promptlint.cli:main"
+promptdoctor = "promptdoctor.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/mhn0328/promptlint"
-Issues = "https://github.com/mhn0328/promptlint/issues"
+Homepage = "https://github.com/mhn0328/promptdoctor"
+Issues = "https://github.com/mhn0328/promptdoctor/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

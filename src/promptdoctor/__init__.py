@@ -1,9 +1,9 @@
-"""promptlint - a small, dependency-free static linter for LLM prompts."""
+"""promptdoctor - a small, dependency-free static linter for LLM prompts."""
 
 from .rules import RULES, Context, Finding, LintResult, Prompt, Rule, lint
 from .tokens import estimate_tokens
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "RULES",

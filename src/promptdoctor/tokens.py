@@ -1,6 +1,6 @@
 """Rough offline token estimation.
 
-promptlint deliberately ships no tokenizer and makes no network calls: the
+promptdoctor deliberately ships no tokenizer and makes no network calls: the
 numbers below are good enough to spot a 4x bigger prompt, not to predict an
 invoice. Most modern BPE vocabularies land around 1.3 tokens per English word
 and roughly 0.7 tokens per CJK character, which is what we approximate here.

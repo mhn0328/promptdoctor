@@ -1,4 +1,4 @@
-"""Allow ``python -m promptlint``."""
+"""Allow ``python -m promptdoctor``."""
 
 from .cli import main
 
