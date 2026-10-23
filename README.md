@@ -2,7 +2,7 @@
 
 > A tiny, dependency-free static linter for LLM prompts.
 
-[![CI](https://img.shields.io/badge/ci-github%20actions-blue)](.github/workflows/ci.yml)
+[![CI](https://github.com/mhn0328/promptlint/actions/workflows/ci.yml/badge.svg)](https://github.com/mhn0328/promptlint/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](pyproject.toml)
