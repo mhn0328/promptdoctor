@@ -1,0 +1,7 @@
+- id: promptdoctor
+  name: promptdoctor
+  description: Lint LLM prompt files for missing output formats, vague wording and conflicting constraints.
+  entry: promptdoctor
+  language: python
+  types: [text]
+  files: \.(md|markdown|txt|prompt|tmpl|j2|jinja)$

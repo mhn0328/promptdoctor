@@ -99,6 +99,21 @@ $ promptdoctor examples/bad.md --format json | jq '.summary'
 }
 ```
 
+## Use as a pre-commit hook
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/mhn0328/promptdoctor
+    rev: v0.2.1
+    hooks:
+      - id: promptdoctor
+```
+
+The hook runs on `.md`, `.txt`, `.prompt`, `.tmpl`, `.j2` and `.jinja` files.
+`--strict` is not passed by default, so only `error`-severity findings block a
+commit; add `args: [--strict]` if you want warnings to block too.
+
 ## Rules
 
 | Rule | Severity | Catches |
